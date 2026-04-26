@@ -1,0 +1,170 @@
+<Window x:Class="ShortcutList.Views.ShortcutEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ショートカット編集"
+        Width="720"
+        Height="560"
+        MinWidth="680"
+        MinHeight="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        Background="#F5F6F8">
+    <Grid Background="#F5F6F8">
+        <Border Margin="18"
+                Background="White"
+                BorderBrush="#D7DCE2"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="26">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0">
+                    <TextBlock Text="ショートカット編集"
+                               FontSize="24"
+                               FontWeight="SemiBold"
+                               Foreground="#20242A"/>
+                    <TextBlock Margin="0,6,0,0"
+                               Text="よく使うフォルダ、URL、ファイルを登録します。"
+                               Foreground="#5F6875"
+                               FontSize="13"/>
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="2"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              CanContentScroll="False">
+                    <StackPanel>
+
+                        <TextBlock Text="名前" Margin="0,0,0,6" FontWeight="SemiBold"/>
+                        <TextBox x:Name="NameTextBox"
+                                 Height="38"
+                                 Margin="0,0,0,18"
+                                 VerticalContentAlignment="Center"/>
+
+                        <TextBlock Text="パス / URL" Margin="0,0,0,6" FontWeight="SemiBold"/>
+                        <Grid Margin="0,0,0,18">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox x:Name="TargetTextBox"
+                                     Height="38"
+                                     VerticalContentAlignment="Center"
+                                     TextChanged="TargetTextBox_TextChanged"/>
+
+                            <Button Grid.Column="2"
+                                    Height="38"
+                                    Content="参照"
+                                    Click="BrowseButton_Click"/>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,18">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="210"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="グループ / タグ" Margin="0,0,0,6" FontWeight="SemiBold"/>
+                                <TextBox x:Name="GroupTextBox"
+                                         Height="38"
+                                         VerticalContentAlignment="Center"
+                                         ToolTip="例: 開発、投資、仕事"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="色" Margin="0,0,0,6" FontWeight="SemiBold"/>
+                                <ComboBox x:Name="TagColorComboBox"
+                                          Height="38"
+                                          VerticalContentAlignment="Center">
+                                    <ComboBoxItem Tag="#CBD5E1">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Width="12" Height="12" Fill="#CBD5E1" Margin="0,0,8,0"/>
+                                            <TextBlock Text="グレー"/>
+                                        </StackPanel>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Tag="#60A5FA">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Width="12" Height="12" Fill="#60A5FA" Margin="0,0,8,0"/>
+                                            <TextBlock Text="青"/>
+                                        </StackPanel>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Tag="#34D399">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Width="12" Height="12" Fill="#34D399" Margin="0,0,8,0"/>
+                                            <TextBlock Text="緑"/>
+                                        </StackPanel>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Tag="#FACC15">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Width="12" Height="12" Fill="#FACC15" Margin="0,0,8,0"/>
+                                            <TextBlock Text="黄"/>
+                                        </StackPanel>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Tag="#F87171">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Width="12" Height="12" Fill="#F87171" Margin="0,0,8,0"/>
+                                            <TextBlock Text="赤"/>
+                                        </StackPanel>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Tag="#A78BFA">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Width="12" Height="12" Fill="#A78BFA" Margin="0,0,8,0"/>
+                                            <TextBlock Text="紫"/>
+                                        </StackPanel>
+                                    </ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+
+                        <Expander Header="詳細設定"
+                                  IsExpanded="False"
+                                  Margin="0,0,0,12">
+                            <StackPanel Margin="0,10,0,0">
+                                <TextBlock Text="引数（任意）" Margin="0,0,0,6" FontWeight="SemiBold"/>
+                                <TextBox x:Name="ArgumentsTextBox"
+                                         Height="38"
+                                         VerticalContentAlignment="Center"
+                                         ToolTip="exeなどに渡す追加情報です。フォルダやURLでは通常不要です。"/>
+                                <TextBlock Margin="0,8,0,0"
+                                           Foreground="#5F6875"
+                                           FontSize="12"
+                                           Text="例: メモ帳で特定ファイルを開く場合、パスに notepad.exe、引数にファイルパスを指定します。"/>
+                            </StackPanel>
+                        </Expander>
+
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Border Grid.Row="4"
+                        BorderBrush="#E2E6EA"
+                        BorderThickness="0,1,0,0"
+                        Padding="0,16,0,0">
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+                        <Button Width="112"
+                                Height="40"
+                                Margin="0,0,10,0"
+                                Content="キャンセル"
+                                Click="CancelButton_Click"/>
+                        <Button Width="130"
+                                Height="40"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Content="保存"
+                                Click="SaveButton_Click"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
