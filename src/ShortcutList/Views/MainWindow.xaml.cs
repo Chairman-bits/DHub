@@ -86,6 +86,8 @@ public partial class MainWindow : Window
 
     private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
+        ApplyResponsiveColumnWidths();
+
         SearchTextBox.Focus();
         Keyboard.Focus(SearchTextBox);
 
@@ -394,15 +396,62 @@ public partial class MainWindow : Window
 
     private void ApplyColumnVisibility()
     {
-        NameColumn.Width = _store.Settings.ShowNameColumn ? NameColumnDefaultWidth : 0;
-        PathColumn.Width = _store.Settings.ShowPathColumn ? PathColumnDefaultWidth : 0;
-        ArgumentsColumn.Width = _store.Settings.ShowArgumentsColumn ? ArgumentsColumnDefaultWidth : 0;
-        GroupColumn.Width = _store.Settings.ShowGroupColumn ? GroupColumnDefaultWidth : 0;
-        LaunchCountColumn.Width = _store.Settings.ShowLaunchCountColumn ? LaunchCountColumnDefaultWidth : 0;
-        LastLaunchColumn.Width = _store.Settings.ShowLastLaunchColumn ? LastLaunchColumnDefaultWidth : 0;
-        CreatedAtColumn.Width = _store.Settings.ShowCreatedAtColumn ? CreatedAtColumnDefaultWidth : 0;
-        UpdatedAtColumn.Width = _store.Settings.ShowUpdatedAtColumn ? UpdatedAtColumnDefaultWidth : 0;
-        StatusColumn.Width = _store.Settings.ShowStatusColumn ? StatusColumnDefaultWidth : 0;
+        ApplyResponsiveColumnWidths();
+    }
+
+    private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        ApplyResponsiveColumnWidths();
+    }
+
+    private void ApplyResponsiveColumnWidths()
+    {
+        if (!IsInitialized || ShortcutListView is null)
+        {
+            return;
+        }
+
+        var availableWidth = ShortcutListView.ActualWidth - 112;
+
+        if (double.IsNaN(availableWidth) || availableWidth <= 0)
+        {
+            availableWidth = ActualWidth - 160;
+        }
+
+        availableWidth = Math.Max(360, availableWidth);
+
+        var totalDefaultWidth = 0.0;
+        totalDefaultWidth += _store.Settings.ShowNameColumn ? NameColumnDefaultWidth : 0;
+        totalDefaultWidth += _store.Settings.ShowPathColumn ? PathColumnDefaultWidth : 0;
+        totalDefaultWidth += _store.Settings.ShowArgumentsColumn ? ArgumentsColumnDefaultWidth : 0;
+        totalDefaultWidth += _store.Settings.ShowGroupColumn ? GroupColumnDefaultWidth : 0;
+        totalDefaultWidth += _store.Settings.ShowLaunchCountColumn ? LaunchCountColumnDefaultWidth : 0;
+        totalDefaultWidth += _store.Settings.ShowLastLaunchColumn ? LastLaunchColumnDefaultWidth : 0;
+        totalDefaultWidth += _store.Settings.ShowCreatedAtColumn ? CreatedAtColumnDefaultWidth : 0;
+        totalDefaultWidth += _store.Settings.ShowUpdatedAtColumn ? UpdatedAtColumnDefaultWidth : 0;
+        totalDefaultWidth += _store.Settings.ShowStatusColumn ? StatusColumnDefaultWidth : 0;
+
+        if (totalDefaultWidth <= 0)
+        {
+            return;
+        }
+
+        var scale = Math.Min(1.0, availableWidth / totalDefaultWidth);
+
+        SetResponsiveColumnWidth(NameColumn, _store.Settings.ShowNameColumn, NameColumnDefaultWidth, scale);
+        SetResponsiveColumnWidth(PathColumn, _store.Settings.ShowPathColumn, PathColumnDefaultWidth, scale);
+        SetResponsiveColumnWidth(ArgumentsColumn, _store.Settings.ShowArgumentsColumn, ArgumentsColumnDefaultWidth, scale);
+        SetResponsiveColumnWidth(GroupColumn, _store.Settings.ShowGroupColumn, GroupColumnDefaultWidth, scale);
+        SetResponsiveColumnWidth(LaunchCountColumn, _store.Settings.ShowLaunchCountColumn, LaunchCountColumnDefaultWidth, scale);
+        SetResponsiveColumnWidth(LastLaunchColumn, _store.Settings.ShowLastLaunchColumn, LastLaunchColumnDefaultWidth, scale);
+        SetResponsiveColumnWidth(CreatedAtColumn, _store.Settings.ShowCreatedAtColumn, CreatedAtColumnDefaultWidth, scale);
+        SetResponsiveColumnWidth(UpdatedAtColumn, _store.Settings.ShowUpdatedAtColumn, UpdatedAtColumnDefaultWidth, scale);
+        SetResponsiveColumnWidth(StatusColumn, _store.Settings.ShowStatusColumn, StatusColumnDefaultWidth, scale);
+    }
+
+    private static void SetResponsiveColumnWidth(GridViewColumn column, bool isVisible, double defaultWidth, double scale)
+    {
+        column.Width = isVisible ? Math.Max(28, Math.Floor(defaultWidth * scale)) : 0;
     }
 
     private void ColumnSettingsButton_Click(object sender, RoutedEventArgs e)

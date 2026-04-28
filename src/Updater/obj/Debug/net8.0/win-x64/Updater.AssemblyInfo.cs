@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DHubUpdater")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c84d50adf3844836798e1ecc4b613976286a7100")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d411affe4d30710eaa7fc19f1af38f3b1a2fd93f")]
 [assembly: System.Reflection.AssemblyProductAttribute("DHubUpdater")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DHubUpdater")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

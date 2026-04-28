@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="DHub"
         Icon="/Assets/DHub.ico"
-        Width="1320"
-        Height="780"
-        MinWidth="1120"
-        MinHeight="600"
+        Width="1352"
+        Height="720"
+        MinWidth="760"
+        MinHeight="520"
         WindowStartupLocation="CenterScreen"
         AllowDrop="True"
         Drop="Window_Drop"
@@ -15,96 +15,76 @@
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         Closed="Window_Closed"
+        SizeChanged="Window_SizeChanged"
         SourceInitialized="Window_SourceInitialized">
-    <DockPanel Background="{StaticResource WindowBackgroundBrush}" LastChildFill="True">
+    <DockPanel Background="{StaticResource WindowBackgroundBrush}" LastChildFill="True" Margin="0,0,-179,0">
 
         <Border DockPanel.Dock="Top"
                 Background="{StaticResource PanelBackgroundBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="0,0,0,1"
                 Padding="12,10">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="12"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="300"/>
-                    <ColumnDefinition Width="12"/>
-                    <ColumnDefinition Width="160"/>
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0" Style="{StaticResource ToolbarButtonStyle}" Click="AddButton_Click">
+            <!-- 横幅不足時は自動で次の行へ折り返し、ツールバーと検索欄を見切れさせません。 -->
+            <WrapPanel Orientation="Horizontal"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Top">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="AddButton_Click" Margin="0,0,8,8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="20" Foreground="#16A34A" Text="＋"/>
                         <TextBlock Margin="8,0,0,0" Text="追加"/>
                     </StackPanel>
                 </Button>
 
-                <Button Grid.Column="2" Style="{StaticResource ToolbarButtonStyle}" Click="EditButton_Click">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="EditButton_Click" Margin="0,0,8,8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="✎" FontSize="18" Foreground="#2F80ED"/>
                         <TextBlock Margin="8,0,0,0" Text="編集"/>
                     </StackPanel>
                 </Button>
 
-                <Button Grid.Column="4" Style="{StaticResource DangerButtonStyle}" Click="DeleteButton_Click">
+                <Button Style="{StaticResource DangerButtonStyle}" Click="DeleteButton_Click" Margin="0,0,12,8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="✕" FontSize="18" Foreground="#E5484D"/>
                         <TextBlock Margin="8,0,0,0" Text="削除"/>
                     </StackPanel>
                 </Button>
 
-                <Button Grid.Column="6" Style="{StaticResource ToolbarButtonStyle}" Click="BackupButton_Click" ToolTip="ショートカット一覧をJSONファイルとして保存します">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="BackupButton_Click" ToolTip="ショートカット一覧をJSONファイルとして保存します" Margin="0,0,8,8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⬇" FontSize="16" Foreground="#64748B"/>
                         <TextBlock Margin="8,0,0,0" Text="保存"/>
                     </StackPanel>
                 </Button>
 
-                <Button Grid.Column="8" Style="{StaticResource ToolbarButtonStyle}" Click="ColumnSettingsButton_Click" ToolTip="一覧の列表示を切り替えます">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="ColumnSettingsButton_Click" ToolTip="一覧の列表示を切り替えます" Margin="0,0,8,8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="▦" FontSize="16" Foreground="#64748B"/>
                         <TextBlock Margin="8,0,0,0" Text="列"/>
                     </StackPanel>
                 </Button>
 
-                <Button Grid.Column="10" Style="{StaticResource ToolbarButtonStyle}" Click="SettingsButton_Click" ToolTip="設定とデータの入出力">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="SettingsButton_Click" ToolTip="設定とデータの入出力" Margin="0,0,8,8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⚙" FontSize="16" Foreground="#64748B"/>
                         <TextBlock Margin="8,0,0,0" Text="設定"/>
                     </StackPanel>
                 </Button>
 
-                <Button Grid.Column="12" Style="{StaticResource ToolbarButtonStyle}" Click="CheckLinksButton_Click" ToolTip="存在しないファイルやフォルダを確認します">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="CheckLinksButton_Click" ToolTip="存在しないファイルやフォルダを確認します" Margin="0,0,8,8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="✓" FontSize="16" Foreground="#64748B"/>
                         <TextBlock Margin="8,0,0,0" Text="確認"/>
                     </StackPanel>
                 </Button>
 
-                <Button Grid.Column="14" Style="{StaticResource ToolbarButtonStyle}" Click="OpenFolderButton_Click">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="OpenFolderButton_Click" Margin="0,0,8,8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="📂" FontSize="16"/>
                         <TextBlock Margin="8,0,0,0" Text="場所を開く"/>
                     </StackPanel>
                 </Button>
 
-                <Button Grid.Column="16" Style="{StaticResource ToolbarButtonStyle}" Click="RunButton_Click">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="RunButton_Click" Margin="0,0,12,8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="▶" FontSize="18" Foreground="#22C55E"/>
                         <TextBlock Margin="8,0,0,0" Text="開く"/>
@@ -112,43 +92,40 @@
                 </Button>
 
                 <TextBox x:Name="SearchTextBox"
-                         Grid.Column="18"
+                         Width="300"
+                         MinWidth="180"
+                         Margin="0,0,8,8"
                          VerticalContentAlignment="Center"
                          TextChanged="SearchTextBox_TextChanged"
                          ToolTip="スペース区切りでAND検索できます"/>
 
                 <ComboBox x:Name="FilterComboBox"
-                          Grid.Column="20"
+                          Width="130"
+                          MinWidth="110"
+                          Margin="0,0,0,8"
                           VerticalContentAlignment="Center"
                           SelectionChanged="FilterComboBox_SelectionChanged"/>
-            </Grid>
+            </WrapPanel>
         </Border>
 
-        <StatusBar DockPanel.Dock="Bottom"
-                   Background="{StaticResource PanelBackgroundBrush}"
-                   BorderBrush="{StaticResource BorderBrush}"
-                   BorderThickness="0,1,0,0"
-                   Padding="6,2">
-            <StatusBarItem>
-                <TextBlock x:Name="CountTextBlock" Foreground="{StaticResource SecondaryTextBrush}" Text="0 個のショートカット"/>
-            </StatusBarItem>
-            <Separator/>
-            <StatusBarItem>
-                <TextBlock x:Name="SortStatusTextBlock" Foreground="{StaticResource SecondaryTextBrush}" Text="並び順: 手動"/>
-            </StatusBarItem>
-            <Separator/>
-            <StatusBarItem>
-                <TextBlock x:Name="HealthStatusTextBlock" Foreground="{StaticResource SecondaryTextBrush}" Text="未検出 0 件"/>
-            </StatusBarItem>
-            <Separator/>
-            <StatusBarItem>
-                <TextBlock x:Name="VersionTextBlock" Foreground="{StaticResource SecondaryTextBrush}" Text="v1.0.0"/>
-            </StatusBarItem>
-            <Separator/>
-            <StatusBarItem>
-                <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="Ctrl+Space クイック検索 / Ctrl+F 検索 / Ctrl+N 追加 / Enterで開く"/>
-            </StatusBarItem>
-        </StatusBar>
+        <Border DockPanel.Dock="Bottom"
+                Background="{StaticResource PanelBackgroundBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="8,4">
+            <!-- ステータスバーも折り返し対応にして、幅が狭い環境でも右端を見切れさせません。 -->
+            <WrapPanel Orientation="Horizontal">
+                <TextBlock x:Name="CountTextBlock" Foreground="{StaticResource SecondaryTextBrush}" Text="0 個のショートカット" Margin="0,0,10,2"/>
+                <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="|" Margin="0,0,10,2"/>
+                <TextBlock x:Name="SortStatusTextBlock" Foreground="{StaticResource SecondaryTextBrush}" Text="並び順: 手動" Margin="0,0,10,2"/>
+                <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="|" Margin="0,0,10,2"/>
+                <TextBlock x:Name="HealthStatusTextBlock" Foreground="{StaticResource SecondaryTextBrush}" Text="未検出 0 件" Margin="0,0,10,2"/>
+                <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="|" Margin="0,0,10,2"/>
+                <TextBlock x:Name="VersionTextBlock" Foreground="{StaticResource SecondaryTextBrush}" Text="v1.0.0" Margin="0,0,10,2"/>
+                <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="|" Margin="0,0,10,2"/>
+                <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="Ctrl+Space クイック検索 / Ctrl+F 検索 / Ctrl+N 追加 / Enterで開く" Margin="0,0,0,2"/>
+            </WrapPanel>
+        </Border>
 
         <Grid Margin="12">
             <ListView x:Name="ShortcutListView"
@@ -156,7 +133,7 @@
                       VerticalAlignment="Stretch"
                       MouseDoubleClick="ShortcutListView_MouseDoubleClick"
                       SelectionChanged="ShortcutListView_SelectionChanged"
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.Resources>
                     <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">

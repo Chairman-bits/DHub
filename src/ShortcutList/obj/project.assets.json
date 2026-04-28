@@ -81,13 +81,13 @@
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "restore": {
-      "projectUniqueName": "C:\\Program Files\\work\\git\\BITS\\DHub\\DHub\\src\\ShortcutList\\ShortcutList.csproj",
+      "projectUniqueName": "C:\\Program Files\\work\\git\\BITS\\DHub\\DHub_dev\\src\\ShortcutList\\ShortcutList.csproj",
       "projectName": "DHub",
-      "projectPath": "C:\\Program Files\\work\\git\\BITS\\DHub\\DHub\\src\\ShortcutList\\ShortcutList.csproj",
+      "projectPath": "C:\\Program Files\\work\\git\\BITS\\DHub\\DHub_dev\\src\\ShortcutList\\ShortcutList.csproj",
       "packagesPath": "C:\\Users\\ambiv\\.nuget\\packages\\",
-      "outputPath": "C:\\Program Files\\work\\git\\BITS\\DHub\\DHub\\src\\ShortcutList\\obj\\",
+      "outputPath": "C:\\Program Files\\work\\git\\BITS\\DHub\\DHub_dev\\src\\ShortcutList\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
