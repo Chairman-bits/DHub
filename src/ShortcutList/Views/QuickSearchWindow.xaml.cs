@@ -51,7 +51,8 @@ public partial class QuickSearchWindow : Window
 
         _results.Clear();
 
-        foreach (var item in items.OrderByDescending(x => x.LastLaunchedAt ?? DateTime.MinValue)
+        foreach (var item in items.OrderByDescending(x => x.IsFavorite)
+                                  .ThenByDescending(x => x.LastLaunchedAt ?? DateTime.MinValue)
                                   .ThenBy(x => x.Name)
                                   .Take(20))
         {

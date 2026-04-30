@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Interop;
 using Forms = System.Windows.Forms;
 using Drawing = System.Drawing;
@@ -25,6 +26,7 @@ public partial class MainWindow : Window
     private const string FolderFilter = "フォルダのみ";
     private const string UrlFilter = "URLのみ";
     private const string FileFilter = "ファイルのみ";
+    private const string FavoriteFilter = "お気に入りのみ";
     private const string BrokenFilter = "未検出のみ";
 
     private readonly ShortcutStore _store = new();
@@ -43,6 +45,7 @@ public partial class MainWindow : Window
     private const double NameColumnDefaultWidth = 240;
     private const double PathColumnDefaultWidth = 460;
     private const double ArgumentsColumnDefaultWidth = 150;
+    private const double OpenApplicationColumnDefaultWidth = 150;
     private const double GroupColumnDefaultWidth = 120;
     private const double LaunchCountColumnDefaultWidth = 90;
     private const double LastLaunchColumnDefaultWidth = 150;
@@ -154,6 +157,7 @@ public partial class MainWindow : Window
         FilterComboBox.Items.Add(FolderFilter);
         FilterComboBox.Items.Add(UrlFilter);
         FilterComboBox.Items.Add(FileFilter);
+        FilterComboBox.Items.Add(FavoriteFilter);
         FilterComboBox.Items.Add(BrokenFilter);
 
         foreach (var group in _store.GetGroups())
@@ -205,6 +209,10 @@ public partial class MainWindow : Window
         {
             items = items.Where(x => x.ShortcutType == ShortcutType.File);
         }
+        else if (filter == FavoriteFilter)
+        {
+            items = items.Where(x => x.IsFavorite);
+        }
         else if (filter == BrokenFilter)
         {
             items = items.Where(x => x.IsBroken);
@@ -248,6 +256,11 @@ public partial class MainWindow : Window
     {
         return _sortKey switch
         {
+            "Favorite" => _sortAscending
+                ? items.OrderBy(x => x.IsFavorite)
+                : items.OrderByDescending(x => x.IsFavorite),
+
+
             "Name" => _sortAscending
                 ? items.OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase)
                 : items.OrderByDescending(x => x.Name, StringComparer.CurrentCultureIgnoreCase),
@@ -259,6 +272,11 @@ public partial class MainWindow : Window
             "Arguments" => _sortAscending
                 ? items.OrderBy(x => x.Arguments, StringComparer.CurrentCultureIgnoreCase)
                 : items.OrderByDescending(x => x.Arguments, StringComparer.CurrentCultureIgnoreCase),
+
+            "OpenApplication" => _sortAscending
+                ? items.OrderBy(x => x.OpenApplicationDisplay, StringComparer.CurrentCultureIgnoreCase)
+                : items.OrderByDescending(x => x.OpenApplicationDisplay, StringComparer.CurrentCultureIgnoreCase),
+
 
             "Group" => _sortAscending
                 ? items.OrderBy(x => x.GroupDisplay, StringComparer.CurrentCultureIgnoreCase)
@@ -321,9 +339,11 @@ public partial class MainWindow : Window
 
         return clean switch
         {
+            "★" => "Favorite",
             "名前" => "Name",
             "パス" => "Path",
             "引数" => "Arguments",
+            "開くアプリ" => "OpenApplication",
             "タグ" => "Group",
             "起動回数" => "LaunchCount",
             "最終起動" => "LastLaunch",
@@ -336,9 +356,11 @@ public partial class MainWindow : Window
 
     private void RefreshSortHeader()
     {
+        FavoriteColumn.Header = "★";
         NameColumn.Header = "名前";
         PathColumn.Header = "パス";
         ArgumentsColumn.Header = "引数";
+        OpenApplicationColumn.Header = "開くアプリ";
         GroupColumn.Header = "タグ";
         LaunchCountColumn.Header = "起動回数";
         LastLaunchColumn.Header = "最終起動";
@@ -351,6 +373,10 @@ public partial class MainWindow : Window
 
         switch (_sortKey)
         {
+            case "Favorite":
+                FavoriteColumn.Header = "★" + arrow;
+                label = "お気に入り";
+                break;
             case "Name":
                 NameColumn.Header = "名前" + arrow;
                 label = "名前";
@@ -362,6 +388,10 @@ public partial class MainWindow : Window
             case "Arguments":
                 ArgumentsColumn.Header = "引数" + arrow;
                 label = "引数";
+                break;
+            case "OpenApplication":
+                OpenApplicationColumn.Header = "開くアプリ" + arrow;
+                label = "開くアプリ";
                 break;
             case "Group":
                 GroupColumn.Header = "タグ" + arrow;
@@ -424,6 +454,7 @@ public partial class MainWindow : Window
         totalDefaultWidth += _store.Settings.ShowNameColumn ? NameColumnDefaultWidth : 0;
         totalDefaultWidth += _store.Settings.ShowPathColumn ? PathColumnDefaultWidth : 0;
         totalDefaultWidth += _store.Settings.ShowArgumentsColumn ? ArgumentsColumnDefaultWidth : 0;
+        totalDefaultWidth += _store.Settings.ShowOpenApplicationColumn ? OpenApplicationColumnDefaultWidth : 0;
         totalDefaultWidth += _store.Settings.ShowGroupColumn ? GroupColumnDefaultWidth : 0;
         totalDefaultWidth += _store.Settings.ShowLaunchCountColumn ? LaunchCountColumnDefaultWidth : 0;
         totalDefaultWidth += _store.Settings.ShowLastLaunchColumn ? LastLaunchColumnDefaultWidth : 0;
@@ -441,6 +472,7 @@ public partial class MainWindow : Window
         SetResponsiveColumnWidth(NameColumn, _store.Settings.ShowNameColumn, NameColumnDefaultWidth, scale);
         SetResponsiveColumnWidth(PathColumn, _store.Settings.ShowPathColumn, PathColumnDefaultWidth, scale);
         SetResponsiveColumnWidth(ArgumentsColumn, _store.Settings.ShowArgumentsColumn, ArgumentsColumnDefaultWidth, scale);
+        SetResponsiveColumnWidth(OpenApplicationColumn, _store.Settings.ShowOpenApplicationColumn, OpenApplicationColumnDefaultWidth, scale);
         SetResponsiveColumnWidth(GroupColumn, _store.Settings.ShowGroupColumn, GroupColumnDefaultWidth, scale);
         SetResponsiveColumnWidth(LaunchCountColumn, _store.Settings.ShowLaunchCountColumn, LaunchCountColumnDefaultWidth, scale);
         SetResponsiveColumnWidth(LastLaunchColumn, _store.Settings.ShowLastLaunchColumn, LastLaunchColumnDefaultWidth, scale);
@@ -461,6 +493,7 @@ public partial class MainWindow : Window
         AddColumnMenuItem(menu, "名前", _store.Settings.ShowNameColumn, value => _store.Settings.ShowNameColumn = value);
         AddColumnMenuItem(menu, "パス", _store.Settings.ShowPathColumn, value => _store.Settings.ShowPathColumn = value);
         AddColumnMenuItem(menu, "引数", _store.Settings.ShowArgumentsColumn, value => _store.Settings.ShowArgumentsColumn = value);
+        AddColumnMenuItem(menu, "開くアプリ", _store.Settings.ShowOpenApplicationColumn, value => _store.Settings.ShowOpenApplicationColumn = value);
         AddColumnMenuItem(menu, "タグ", _store.Settings.ShowGroupColumn, value => _store.Settings.ShowGroupColumn = value);
         AddColumnMenuItem(menu, "起動回数", _store.Settings.ShowLaunchCountColumn, value => _store.Settings.ShowLaunchCountColumn = value);
         AddColumnMenuItem(menu, "最終起動", _store.Settings.ShowLastLaunchColumn, value => _store.Settings.ShowLastLaunchColumn = value);
@@ -573,7 +606,10 @@ public partial class MainWindow : Window
         SelectedItem.Name = dialog.ResultItem.Name;
         SelectedItem.TargetPath = dialog.ResultItem.TargetPath;
         SelectedItem.Arguments = dialog.ResultItem.Arguments;
+        SelectedItem.OpenApplicationPath = dialog.ResultItem.OpenApplicationPath;
+        SelectedItem.OpenApplicationArguments = dialog.ResultItem.OpenApplicationArguments;
         SelectedItem.ShortcutType = dialog.ResultItem.ShortcutType;
+        SelectedItem.IsFavorite = dialog.ResultItem.IsFavorite;
         SelectedItem.GroupName = dialog.ResultItem.GroupName;
         SelectedItem.TagColor = dialog.ResultItem.TagColor;
         SelectedItem.TouchUpdated();
@@ -582,6 +618,14 @@ public partial class MainWindow : Window
         RefreshFilterItemsKeepSelection();
         ApplyFilter();
     }
+
+    private void FavoriteButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (SelectedItem is null) return;
+
+        ToggleFavorite(SelectedItem);
+    }
+
 
     private void DeleteButton_Click(object sender, RoutedEventArgs e)
     {
@@ -821,10 +865,125 @@ public partial class MainWindow : Window
 
     private void LaunchItem(ShortcutItem item)
     {
-        ShortcutRunner.Run(item);
-        item.TouchLaunched();
+        try
+        {
+            ShortcutRunner.Run(item);
+            item.TouchLaunched();
+            _store.Save();
+            ApplyFilter();
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                $"ショートカットを開けませんでした。\n\n対象: {item.TargetPath}\n開くアプリ: {item.OpenApplicationDisplay}\n\n{ex.Message}",
+                "DHub",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
+        }
+    }
+
+    private void ToggleFavorite(ShortcutItem item)
+    {
+        item.IsFavorite = !item.IsFavorite;
+        item.TouchUpdated();
         _store.Save();
         ApplyFilter();
+    }
+
+    private void ResetOpenApplication(ShortcutItem item)
+    {
+        item.OpenApplicationPath = ShortcutRunner.GetDefaultOpenApplicationPath(item.ShortcutType);
+        item.OpenApplicationArguments = string.Empty;
+        item.TouchUpdated();
+        _store.Save();
+        ApplyFilter();
+    }
+
+    private void SelectOpenApplication(ShortcutItem item)
+    {
+        using var dialog = new Forms.OpenFileDialog
+        {
+            Title = "開くアプリを選択",
+            Filter = "実行ファイル (*.exe)|*.exe|すべてのファイル (*.*)|*.*",
+            CheckFileExists = true
+        };
+
+        if (dialog.ShowDialog() != Forms.DialogResult.OK)
+        {
+            return;
+        }
+
+        item.OpenApplicationPath = dialog.FileName;
+        item.TouchUpdated();
+        _store.Save();
+        ApplyFilter();
+    }
+
+    private void ShowItemContextMenu(ShortcutItem item)
+    {
+        ShortcutListView.ContextMenu = BuildItemContextMenu(item);
+        ShortcutListView.ContextMenu.IsOpen = true;
+    }
+
+    private ContextMenu BuildItemContextMenu(ShortcutItem item)
+    {
+        var menu = new ContextMenu();
+
+        AddMenuItem(menu, "開く", () => LaunchItem(item));
+        AddMenuItem(menu, "場所を開く", () => ShortcutRunner.OpenFolder(item.TargetPath));
+        menu.Items.Add(new Separator());
+        AddMenuItem(menu, item.IsFavorite ? "お気に入り解除" : "お気に入り登録", () => ToggleFavorite(item));
+        AddMenuItem(menu, "開くアプリを指定...", () => SelectOpenApplication(item));
+        AddMenuItem(menu, "開くアプリを既定に戻す", () => ResetOpenApplication(item));
+        menu.Items.Add(new Separator());
+        AddMenuItem(menu, "編集", () => EditButton_Click(this, new RoutedEventArgs()));
+        AddMenuItem(menu, "削除", () => DeleteButton_Click(this, new RoutedEventArgs()));
+        AddMenuItem(menu, "パスをコピー", () => WpfClipboard.SetText(item.TargetPath));
+
+        return menu;
+    }
+
+    private void ShortcutListView_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        var item = FindVisualParent<System.Windows.Controls.ListViewItem>(e.OriginalSource as DependencyObject);
+        if (item is null)
+        {
+            ShortcutListView.SelectedItem = null;
+            return;
+        }
+
+        item.Focus();
+        item.IsSelected = true;
+        if (item.DataContext is ShortcutItem shortcut)
+        {
+            ShortcutListView.ContextMenu = BuildItemContextMenu(shortcut);
+        }
+    }
+
+    private void ShortcutListView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+        if (SelectedItem is null)
+        {
+            e.Handled = true;
+            return;
+        }
+
+        ShortcutListView.ContextMenu = BuildItemContextMenu(SelectedItem);
+    }
+
+    private static T? FindVisualParent<T>(DependencyObject? current) where T : DependencyObject
+    {
+        while (current is not null)
+        {
+            if (current is T matched)
+            {
+                return matched;
+            }
+
+            current = VisualTreeHelper.GetParent(current);
+        }
+
+        return null;
     }
 
     private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) => ApplyFilter();
@@ -913,6 +1072,7 @@ public partial class MainWindow : Window
             Name = ShortcutDetector.GuessName(target),
             TargetPath = target,
             ShortcutType = type.Value,
+            OpenApplicationPath = ShortcutRunner.GetDefaultOpenApplicationPath(type.Value),
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         };
@@ -1040,7 +1200,9 @@ public partial class MainWindow : Window
         var menu = new Forms.ContextMenuStrip();
 
         var quickOpen = new Forms.ToolStripMenuItem("クイック起動");
-        var launchItems = _store.Items.OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase).ToList();
+        var launchItems = _store.Items.OrderByDescending(x => x.IsFavorite)
+            .ThenBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
 
         if (launchItems.Count == 0)
         {
@@ -1051,7 +1213,7 @@ public partial class MainWindow : Window
             foreach (var item in launchItems)
             {
                 var text = item.Name.Length > 36 ? item.Name[..36] + "..." : item.Name;
-                var menuItem = new Forms.ToolStripMenuItem($"{item.IconText} {text}");
+                var menuItem = new Forms.ToolStripMenuItem($"{item.FavoriteText} {item.IconText} {text}");
                 menuItem.Click += (_, _) => Dispatcher.Invoke(() => LaunchItem(item));
                 quickOpen.DropDownItems.Add(menuItem);
             }

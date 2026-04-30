@@ -18,7 +18,7 @@ if errorlevel 1 (
 )
 
 set OUT_DIR=bin\Release\net8.0-windows\win-x64\publish
-set EXE_NAME=ShortcutList.exe
+set EXE_NAME=DHub.exe
 
 if not exist "%OUT_DIR%\%EXE_NAME%" (
   echo EXE NOT FOUND
@@ -39,6 +39,6 @@ if errorlevel 1 (
 )
 
 echo DONE
-echo release\ShortcutList.exe
+echo release\DHub.exe
 
 pause

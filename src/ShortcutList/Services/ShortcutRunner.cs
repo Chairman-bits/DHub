@@ -5,11 +5,15 @@ namespace ShortcutList.Services;
 
 public static class ShortcutRunner
 {
+    private const string TargetPlaceholder = "{target}";
+
     public static void Run(ShortcutItem item)
     {
-        if (item.ShortcutType == ShortcutType.Folder)
+        var openApplicationPath = GetEffectiveOpenApplicationPath(item);
+
+        if (!string.IsNullOrWhiteSpace(openApplicationPath))
         {
-            OpenFolder(item.TargetPath);
+            RunWithApplication(item, openApplicationPath);
             return;
         }
 
@@ -21,6 +25,32 @@ public static class ShortcutRunner
         };
 
         Process.Start(startInfo);
+    }
+
+    public static string GetDefaultOpenApplicationPath(ShortcutType shortcutType)
+    {
+        return shortcutType == ShortcutType.Folder ? "explorer.exe" : string.Empty;
+    }
+
+    public static string GetEffectiveOpenApplicationPath(ShortcutItem item)
+    {
+        if (!string.IsNullOrWhiteSpace(item.OpenApplicationPath))
+        {
+            return item.OpenApplicationPath.Trim();
+        }
+
+        return GetDefaultOpenApplicationPath(item.ShortcutType);
+    }
+
+    public static string QuoteArgument(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "\"\"";
+        }
+
+        var escaped = value.Replace("\"", "\\\"");
+        return $"\"{escaped}\"";
     }
 
     public static void OpenFolder(string path)
@@ -56,5 +86,47 @@ public static class ShortcutRunner
             FileName = url,
             UseShellExecute = true
         });
+    }
+
+    private static void RunWithApplication(ShortcutItem item, string openApplicationPath)
+    {
+        var arguments = BuildOpenApplicationArguments(item);
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = openApplicationPath,
+            Arguments = arguments,
+            UseShellExecute = true
+        });
+    }
+
+    private static string BuildOpenApplicationArguments(ShortcutItem item)
+    {
+        var target = QuoteArgument(item.TargetPath);
+        var openArguments = item.OpenApplicationArguments?.Trim() ?? string.Empty;
+        var itemArguments = item.Arguments?.Trim() ?? string.Empty;
+
+        if (!string.IsNullOrWhiteSpace(openArguments) &&
+            openArguments.Contains(TargetPlaceholder, StringComparison.OrdinalIgnoreCase))
+        {
+            var replaced = openArguments.Replace(TargetPlaceholder, target, StringComparison.OrdinalIgnoreCase);
+            return string.IsNullOrWhiteSpace(itemArguments) ? replaced : $"{replaced} {itemArguments}";
+        }
+
+        var parts = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(openArguments))
+        {
+            parts.Add(openArguments);
+        }
+
+        parts.Add(target);
+
+        if (!string.IsNullOrWhiteSpace(itemArguments))
+        {
+            parts.Add(itemArguments);
+        }
+
+        return string.Join(" ", parts);
     }
 }

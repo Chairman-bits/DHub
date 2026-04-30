@@ -81,7 +81,7 @@
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
-    "version": "1.0.1",
+    "version": "1.0.2",
     "restore": {
       "projectUniqueName": "C:\\Program Files\\work\\git\\BITS\\DHub\\DHub_dev\\src\\Updater\\Updater.csproj",
       "projectName": "DHubUpdater",

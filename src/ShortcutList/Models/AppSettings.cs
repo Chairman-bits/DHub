@@ -7,6 +7,7 @@ public class AppSettings
     public bool ShowNameColumn { get; set; } = true;
     public bool ShowPathColumn { get; set; } = true;
     public bool ShowArgumentsColumn { get; set; } = false;
+    public bool ShowOpenApplicationColumn { get; set; } = true;
     public bool ShowGroupColumn { get; set; } = true;
     public bool ShowLaunchCountColumn { get; set; } = true;
     public bool ShowLastLaunchColumn { get; set; } = true;

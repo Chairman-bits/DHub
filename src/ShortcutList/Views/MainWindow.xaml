@@ -17,7 +17,7 @@
         Closed="Window_Closed"
         SizeChanged="Window_SizeChanged"
         SourceInitialized="Window_SourceInitialized">
-    <DockPanel Background="{StaticResource WindowBackgroundBrush}" LastChildFill="True" Margin="0,0,-179,0">
+    <DockPanel Background="{StaticResource WindowBackgroundBrush}" LastChildFill="True" Margin="0">
 
         <Border DockPanel.Dock="Top"
                 Background="{StaticResource PanelBackgroundBrush}"
@@ -39,6 +39,13 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="✎" FontSize="18" Foreground="#2F80ED"/>
                         <TextBlock Margin="8,0,0,0" Text="編集"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="FavoriteButton_Click" ToolTip="選択中のショートカットをお気に入り登録/解除します" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="★" FontSize="18" Foreground="#F59E0B"/>
+                        <TextBlock Margin="8,0,0,0" Text="お気に入り"/>
                     </StackPanel>
                 </Button>
 
@@ -97,11 +104,11 @@
                          Margin="0,0,8,8"
                          VerticalContentAlignment="Center"
                          TextChanged="SearchTextBox_TextChanged"
-                         ToolTip="スペース区切りでAND検索できます"/>
+                         ToolTip="スペース区切りでAND検索できます。例: お気に入り 開発 / chrome URL"/>
 
                 <ComboBox x:Name="FilterComboBox"
-                          Width="130"
-                          MinWidth="110"
+                          Width="150"
+                          MinWidth="120"
                           Margin="0,0,0,8"
                           VerticalContentAlignment="Center"
                           SelectionChanged="FilterComboBox_SelectionChanged"/>
@@ -123,7 +130,7 @@
                 <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="|" Margin="0,0,10,2"/>
                 <TextBlock x:Name="VersionTextBlock" Foreground="{StaticResource SecondaryTextBrush}" Text="v1.0.0" Margin="0,0,10,2"/>
                 <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="|" Margin="0,0,10,2"/>
-                <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="Ctrl+Space クイック検索 / Ctrl+F 検索 / Ctrl+N 追加 / Enterで開く" Margin="0,0,0,2"/>
+                <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="Ctrl+Space クイック検索 / Ctrl+F 検索 / Ctrl+N 追加 / 右クリックで操作 / Enterで開く" Margin="0,0,0,2"/>
             </WrapPanel>
         </Border>
 
@@ -132,6 +139,8 @@
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       MouseDoubleClick="ShortcutListView_MouseDoubleClick"
+                      PreviewMouseRightButtonDown="ShortcutListView_PreviewMouseRightButtonDown"
+                      ContextMenuOpening="ShortcutListView_ContextMenuOpening"
                       SelectionChanged="ShortcutListView_SelectionChanged"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -150,6 +159,14 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
+                        <GridViewColumn x:Name="FavoriteColumn" Header="★" Width="44">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontSize="18" Text="{Binding FavoriteText}" Foreground="#F59E0B" HorizontalAlignment="Center" ToolTip="{Binding FavoriteDisplay}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
                         <GridViewColumn Header="色" Width="48">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -163,9 +180,10 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn x:Name="NameColumn" Header="名前" Width="240" DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn x:Name="PathColumn" Header="パス" Width="460" DisplayMemberBinding="{Binding TargetPath}"/>
+                        <GridViewColumn x:Name="NameColumn" Header="名前" Width="220" DisplayMemberBinding="{Binding Name}"/>
+                        <GridViewColumn x:Name="PathColumn" Header="パス" Width="380" DisplayMemberBinding="{Binding TargetPath}"/>
                         <GridViewColumn x:Name="ArgumentsColumn" Header="引数" Width="150" DisplayMemberBinding="{Binding Arguments}"/>
+                        <GridViewColumn x:Name="OpenApplicationColumn" Header="開くアプリ" Width="150" DisplayMemberBinding="{Binding OpenApplicationDisplay}"/>
                         <GridViewColumn x:Name="GroupColumn" Header="タグ" Width="120" DisplayMemberBinding="{Binding GroupDisplay}"/>
                         <GridViewColumn x:Name="LaunchCountColumn" Header="起動回数" Width="90" DisplayMemberBinding="{Binding LaunchCount}"/>
                         <GridViewColumn x:Name="LastLaunchColumn" Header="最終起動" Width="150" DisplayMemberBinding="{Binding LastLaunchedDisplay}"/>

@@ -9,9 +9,12 @@ public class ShortcutItem : INotifyPropertyChanged
     private string _name = string.Empty;
     private string _targetPath = string.Empty;
     private string _arguments = string.Empty;
+    private string _openApplicationPath = string.Empty;
+    private string _openApplicationArguments = string.Empty;
     private string _groupName = string.Empty;
     private string _tagColor = "#CBD5E1";
     private ShortcutType _shortcutType;
+    private bool _isFavorite;
     private DateTime _createdAt = DateTime.Now;
     private DateTime _updatedAt = DateTime.Now;
     private int _launchCount;
@@ -61,6 +64,32 @@ public class ShortcutItem : INotifyPropertyChanged
         }
     }
 
+    public string OpenApplicationPath
+    {
+        get => _openApplicationPath;
+        set
+        {
+            if (SetField(ref _openApplicationPath, value?.Trim() ?? string.Empty))
+            {
+                OnPropertyChanged(nameof(OpenApplicationDisplay));
+                OnPropertyChanged(nameof(SearchText));
+            }
+        }
+    }
+
+    public string OpenApplicationArguments
+    {
+        get => _openApplicationArguments;
+        set
+        {
+            if (SetField(ref _openApplicationArguments, value?.Trim() ?? string.Empty))
+            {
+                OnPropertyChanged(nameof(OpenApplicationDisplay));
+                OnPropertyChanged(nameof(SearchText));
+            }
+        }
+    }
+
     public ShortcutType ShortcutType
     {
         get => _shortcutType;
@@ -72,6 +101,21 @@ public class ShortcutItem : INotifyPropertyChanged
                 OnPropertyChanged(nameof(IconText));
                 OnPropertyChanged(nameof(StatusText));
                 OnPropertyChanged(nameof(IsBroken));
+                OnPropertyChanged(nameof(OpenApplicationDisplay));
+                OnPropertyChanged(nameof(SearchText));
+            }
+        }
+    }
+
+    public bool IsFavorite
+    {
+        get => _isFavorite;
+        set
+        {
+            if (SetField(ref _isFavorite, value))
+            {
+                OnPropertyChanged(nameof(FavoriteText));
+                OnPropertyChanged(nameof(FavoriteDisplay));
                 OnPropertyChanged(nameof(SearchText));
             }
         }
@@ -117,6 +161,9 @@ public class ShortcutItem : INotifyPropertyChanged
         _ => "□"
     };
 
+    public string FavoriteText => IsFavorite ? "★" : "☆";
+    public string FavoriteDisplay => IsFavorite ? "お気に入り" : "通常";
+
     public string GroupDisplay => string.IsNullOrWhiteSpace(GroupName) ? "未分類" : GroupName;
 
     public bool IsBroken => ShortcutType switch
@@ -130,7 +177,34 @@ public class ShortcutItem : INotifyPropertyChanged
 
     public string LastLaunchedDisplay => LastLaunchedAt.HasValue ? LastLaunchedAt.Value.ToString("yyyy/MM/dd HH:mm") : "-";
 
-    public string SearchText => $"{Name} {TargetPath} {Arguments} {TypeText} {GroupDisplay} {StatusText}".ToLowerInvariant();
+    public string OpenApplicationDisplay
+    {
+        get
+        {
+            var path = OpenApplicationPath;
+
+            if (string.IsNullOrWhiteSpace(path) && ShortcutType == ShortcutType.Folder)
+            {
+                return "エクスプローラー";
+            }
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return "既定のアプリ";
+            }
+
+            if (string.Equals(path, "explorer.exe", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(System.IO.Path.GetFileName(path), "explorer.exe", StringComparison.OrdinalIgnoreCase))
+            {
+                return "エクスプローラー";
+            }
+
+            var fileName = System.IO.Path.GetFileNameWithoutExtension(path);
+            return string.IsNullOrWhiteSpace(fileName) ? path : fileName;
+        }
+    }
+
+    public string SearchText => $"{Name} {TargetPath} {Arguments} {OpenApplicationPath} {OpenApplicationArguments} {OpenApplicationDisplay} {FavoriteDisplay} {TypeText} {GroupDisplay} {StatusText}".ToLowerInvariant();
 
     public void TouchUpdated()
     {
