@@ -35,6 +35,20 @@
                     </StackPanel>
                 </Button>
 
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="CommandPaletteButton_Click" ToolTip="ショートカット・ワークスペース・コマンド・操作をまとめて検索します" Margin="0,0,8,8" Visibility="Collapsed">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="18" Foreground="#7C3AED" Text="⌘"/>
+                        <TextBlock Margin="8,0,0,0" Text="コマンド"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="HomeButton_Click" ToolTip="今日の作業ダッシュボードを開きます" Margin="0,0,8,8" Visibility="Collapsed">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="18" Foreground="#0EA5E9" Text="⌂"/>
+                        <TextBlock Margin="8,0,0,0" Text="ホーム"/>
+                    </StackPanel>
+                </Button>
+
                 <Button Style="{StaticResource ToolbarButtonStyle}" Click="EditButton_Click" Margin="0,0,8,8">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="✎" FontSize="18" Foreground="#2F80ED"/>
@@ -42,12 +56,6 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ToolbarButtonStyle}" Click="FavoriteButton_Click" ToolTip="選択中のショートカットをお気に入り登録/解除します" Margin="0,0,8,8">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="★" FontSize="18" Foreground="#F59E0B"/>
-                        <TextBlock Margin="8,0,0,0" Text="お気に入り"/>
-                    </StackPanel>
-                </Button>
 
                 <Button Style="{StaticResource DangerButtonStyle}" Click="DeleteButton_Click" Margin="0,0,12,8">
                     <StackPanel Orientation="Horizontal">
@@ -107,11 +115,34 @@
                          ToolTip="スペース区切りでAND検索できます。例: お気に入り 開発 / chrome URL"/>
 
                 <ComboBox x:Name="FilterComboBox"
-                          Width="150"
+                          Width="140"
                           MinWidth="120"
-                          Margin="0,0,0,8"
+                          Margin="0,0,8,8"
                           VerticalContentAlignment="Center"
                           SelectionChanged="FilterComboBox_SelectionChanged"/>
+
+                <ComboBox x:Name="GroupFilterComboBox"
+                          Width="150"
+                          MinWidth="120"
+                          Margin="0,0,8,8"
+                          VerticalContentAlignment="Center"
+                          SelectionChanged="GroupFilterComboBox_SelectionChanged"/>
+
+                <ComboBox x:Name="TagFilterComboBox"
+                          Width="150"
+                          MinWidth="120"
+                          Margin="0,0,8,8"
+                          VerticalContentAlignment="Center"
+                          SelectionChanged="TagFilterComboBox_SelectionChanged"/>
+
+                <ComboBox x:Name="SortComboBox"
+                          Width="0"
+                          MinWidth="0"
+                          Height="0"
+                          Margin="0"
+                          VerticalContentAlignment="Center"
+                          Visibility="Collapsed"
+                          SelectionChanged="SortComboBox_SelectionChanged"/>
             </WrapPanel>
         </Border>
 
@@ -130,39 +161,88 @@
                 <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="|" Margin="0,0,10,2"/>
                 <TextBlock x:Name="VersionTextBlock" Foreground="{StaticResource SecondaryTextBrush}" Text="v1.0.0" Margin="0,0,10,2"/>
                 <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="|" Margin="0,0,10,2"/>
-                <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="Ctrl+Space クイック検索 / Ctrl+F 検索 / Ctrl+N 追加 / 右クリックで操作 / Enterで開く" Margin="0,0,0,2"/>
+                <TextBlock Foreground="{StaticResource SecondaryTextBrush}" Text="Ctrl+Shift+Space クイック検索 / Ctrl+Shift+P 統合検索 / Ctrl+Shift+D 管理画面 / Ctrl+F 検索 / Ctrl+N 追加 / ★列クリックでお気に入り / 右クリックで操作 / Enterで開く" Margin="0,0,0,2"/>
             </WrapPanel>
         </Border>
 
         <Grid Margin="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0"/>
+                <ColumnDefinition Width="0"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Visibility="Collapsed"
+                    Background="{StaticResource PanelBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="10">
+                <StackPanel>
+                    <TextBlock Text="DHub" FontSize="20" FontWeight="SemiBold" Margin="4,0,0,12"/>
+                    <Button Content="ホーム" Height="34" Margin="0,0,0,6" Click="HomeButton_Click"/>
+                    <Button Content="統合検索" Height="34" Margin="0,0,0,6" Click="CommandPaletteButton_Click"/>
+                    <Button Content="コマンド" Height="34" Margin="0,0,0,6" Click="CommandShortcutButton_Click"/>
+                    <Button Content="ログ" Height="34" Margin="0,0,0,6" Click="OperationLogButton_Click"/>
+                    <Button Content="すべて" Height="34" Margin="0,0,0,6" Click="SidebarAllButton_Click"/>
+                    <Button Content="お気に入り" Height="34" Margin="0,0,0,6" Click="SidebarFavoritesButton_Click"/>
+                    <Button Content="最近使った" Height="34" Margin="0,0,0,6" Click="SidebarRecentButton_Click"/>
+                    <Button Content="ワークスペース" Height="34" Margin="0,0,0,6" Click="WorkspaceButton_Click"/>
+                    <Button Content="リンク切れ" Height="34" Margin="0,0,0,6" Click="SidebarBrokenButton_Click"/>
+                    <Button Content="バックアップ" Height="34" Margin="0,0,0,6" Click="ManualBackupButton_Click"/>
+                    <Button Content="復元" Height="34" Margin="0,0,0,6" Click="RestoreWizardButton_Click"/>
+                    <Button Content="一括編集" Height="34" Margin="0,0,0,6" Click="BulkEditButton_Click"/>
+                    <Button Content="設定" Height="34" Margin="0,0,0,6" Click="SettingsScreenButton_Click"/>
+                    <Separator Margin="0,8,0,8"/>
+                    <TextBlock Text="ホットキー" FontWeight="SemiBold" Margin="4,0,0,4"/>
+                    <TextBlock Text="Ctrl+Shift+Space
+クイック検索" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" Margin="4,0,0,8"/>
+                    <TextBlock Text="Ctrl+Shift+D
+管理画面" Foreground="{StaticResource SecondaryTextBrush}" TextWrapping="Wrap" Margin="4,0,0,0"/>
+                </StackPanel>
+            </Border>
+
             <ListView x:Name="ShortcutListView"
+                      Grid.Column="2"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       MouseDoubleClick="ShortcutListView_MouseDoubleClick"
                       PreviewMouseRightButtonDown="ShortcutListView_PreviewMouseRightButtonDown"
                       ContextMenuOpening="ShortcutListView_ContextMenuOpening"
                       SelectionChanged="ShortcutListView_SelectionChanged"
+                      SelectionMode="Extended"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.Resources>
                     <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
                         <EventSetter Event="Click" Handler="GridViewColumnHeader_Click"/>
+                    </Style>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="MinHeight" Value="40"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
                     </Style>
                 </ListView.Resources>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="44">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock FontSize="20" Text="{Binding IconText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
+                        
 
-                        <GridViewColumn x:Name="FavoriteColumn" Header="★" Width="44">
+                        <GridViewColumn x:Name="FavoriteColumn" Header="★" Width="48">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock FontSize="18" Text="{Binding FavoriteText}" Foreground="#F59E0B" HorizontalAlignment="Center" ToolTip="{Binding FavoriteDisplay}"/>
+                                    <TextBlock Tag="{Binding}"
+                                               Text="{Binding FavoriteText}"
+                                               FontSize="22"
+                                               Foreground="#F59E0B"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Cursor="Hand"
+                                               ToolTip="クリックでお気に入り登録/解除"
+                                               MouseLeftButtonDown="FavoriteCell_MouseLeftButtonDown"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -184,7 +264,8 @@
                         <GridViewColumn x:Name="PathColumn" Header="パス" Width="380" DisplayMemberBinding="{Binding TargetPath}"/>
                         <GridViewColumn x:Name="ArgumentsColumn" Header="引数" Width="150" DisplayMemberBinding="{Binding Arguments}"/>
                         <GridViewColumn x:Name="OpenApplicationColumn" Header="開くアプリ" Width="150" DisplayMemberBinding="{Binding OpenApplicationDisplay}"/>
-                        <GridViewColumn x:Name="GroupColumn" Header="タグ" Width="120" DisplayMemberBinding="{Binding GroupDisplay}"/>
+                        <GridViewColumn x:Name="GroupColumn" Header="グループ" Width="120" DisplayMemberBinding="{Binding GroupDisplay}"/>
+                        <GridViewColumn x:Name="TagsColumn" Header="タグ" Width="160" DisplayMemberBinding="{Binding TagsDisplay}"/>
                         <GridViewColumn x:Name="LaunchCountColumn" Header="起動回数" Width="90" DisplayMemberBinding="{Binding LaunchCount}"/>
                         <GridViewColumn x:Name="LastLaunchColumn" Header="最終起動" Width="150" DisplayMemberBinding="{Binding LastLaunchedDisplay}"/>
                         <GridViewColumn x:Name="CreatedAtColumn" Header="作成日" Width="150" DisplayMemberBinding="{Binding CreatedAt}"/>

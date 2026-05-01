@@ -1,5 +1,8 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
+using System.Windows.Media;
+using ShortcutList.Services;
 
 namespace ShortcutList.Models;
 
@@ -12,13 +15,16 @@ public class ShortcutItem : INotifyPropertyChanged
     private string _openApplicationPath = string.Empty;
     private string _openApplicationArguments = string.Empty;
     private string _groupName = string.Empty;
+    private string _tags = string.Empty;
     private string _tagColor = "#CBD5E1";
+    private string _memo = string.Empty;
     private ShortcutType _shortcutType;
     private bool _isFavorite;
     private DateTime _createdAt = DateTime.Now;
     private DateTime _updatedAt = DateTime.Now;
     private int _launchCount;
     private DateTime? _lastLaunchedAt;
+    private int _sortOrder;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -46,6 +52,7 @@ public class ShortcutItem : INotifyPropertyChanged
                 OnPropertyChanged(nameof(SearchText));
                 OnPropertyChanged(nameof(TypeText));
                 OnPropertyChanged(nameof(IconText));
+                OnPropertyChanged(nameof(IconImageSource));
                 OnPropertyChanged(nameof(StatusText));
                 OnPropertyChanged(nameof(IsBroken));
             }
@@ -99,6 +106,7 @@ public class ShortcutItem : INotifyPropertyChanged
             {
                 OnPropertyChanged(nameof(TypeText));
                 OnPropertyChanged(nameof(IconText));
+                OnPropertyChanged(nameof(IconImageSource));
                 OnPropertyChanged(nameof(StatusText));
                 OnPropertyChanged(nameof(IsBroken));
                 OnPropertyChanged(nameof(OpenApplicationDisplay));
@@ -116,6 +124,7 @@ public class ShortcutItem : INotifyPropertyChanged
             {
                 OnPropertyChanged(nameof(FavoriteText));
                 OnPropertyChanged(nameof(FavoriteDisplay));
+                OnPropertyChanged(nameof(FavoriteActionText));
                 OnPropertyChanged(nameof(SearchText));
             }
         }
@@ -134,16 +143,43 @@ public class ShortcutItem : INotifyPropertyChanged
         }
     }
 
+    public string Tags
+    {
+        get => _tags;
+        set
+        {
+            if (SetField(ref _tags, NormalizeTagsText(value)))
+            {
+                OnPropertyChanged(nameof(TagsDisplay));
+                OnPropertyChanged(nameof(SearchText));
+            }
+        }
+    }
+
     public string TagColor
     {
         get => _tagColor;
         set => SetField(ref _tagColor, string.IsNullOrWhiteSpace(value) ? "#CBD5E1" : value);
     }
 
+    public string Memo
+    {
+        get => _memo;
+        set
+        {
+            if (SetField(ref _memo, value ?? string.Empty))
+            {
+                OnPropertyChanged(nameof(MemoDisplay));
+                OnPropertyChanged(nameof(SearchText));
+            }
+        }
+    }
+
     public DateTime CreatedAt { get => _createdAt; set => SetField(ref _createdAt, value); }
     public DateTime UpdatedAt { get => _updatedAt; set => SetField(ref _updatedAt, value); }
     public int LaunchCount { get => _launchCount; set => SetField(ref _launchCount, value); }
     public DateTime? LastLaunchedAt { get => _lastLaunchedAt; set => SetField(ref _lastLaunchedAt, value); }
+    public int SortOrder { get => _sortOrder; set => SetField(ref _sortOrder, value); }
 
     public string TypeText => ShortcutType switch
     {
@@ -161,10 +197,16 @@ public class ShortcutItem : INotifyPropertyChanged
         _ => "□"
     };
 
+    [JsonIgnore]
+    public ImageSource? IconImageSource => FileIconService.GetIcon(this);
+
     public string FavoriteText => IsFavorite ? "★" : "☆";
+    public string FavoriteActionText => IsFavorite ? "★ 解除" : "☆ 登録";
     public string FavoriteDisplay => IsFavorite ? "お気に入り" : "通常";
 
     public string GroupDisplay => string.IsNullOrWhiteSpace(GroupName) ? "未分類" : GroupName;
+    public string TagsDisplay => string.IsNullOrWhiteSpace(Tags) ? "-" : Tags;
+    public string MemoDisplay => string.IsNullOrWhiteSpace(Memo) ? "-" : Memo;
 
     public bool IsBroken => ShortcutType switch
     {
@@ -204,7 +246,17 @@ public class ShortcutItem : INotifyPropertyChanged
         }
     }
 
-    public string SearchText => $"{Name} {TargetPath} {Arguments} {OpenApplicationPath} {OpenApplicationArguments} {OpenApplicationDisplay} {FavoriteDisplay} {TypeText} {GroupDisplay} {StatusText}".ToLowerInvariant();
+    public string SearchText => $"{Name} {TargetPath} {Arguments} {OpenApplicationPath} {OpenApplicationArguments} {OpenApplicationDisplay} {FavoriteDisplay} {TypeText} {GroupDisplay} {TagsDisplay} {Memo} {StatusText}".ToLowerInvariant();
+
+    public IReadOnlyList<string> GetTagList()
+    {
+        return SplitTags(Tags).ToList();
+    }
+
+    public bool HasTag(string tag)
+    {
+        return SplitTags(Tags).Any(x => string.Equals(x, tag, StringComparison.OrdinalIgnoreCase));
+    }
 
     public void TouchUpdated()
     {
@@ -227,6 +279,21 @@ public class ShortcutItem : INotifyPropertyChanged
         OnPropertyChanged(nameof(IsBroken));
         OnPropertyChanged(nameof(StatusText));
         OnPropertyChanged(nameof(SearchText));
+    }
+
+    public static IEnumerable<string> SplitTags(string? tags)
+    {
+        return (tags ?? string.Empty)
+            .Replace('、', ',')
+            .Replace('，', ',')
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static string NormalizeTagsText(string? tags)
+    {
+        return string.Join(", ", SplitTags(tags));
     }
 
     private bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)

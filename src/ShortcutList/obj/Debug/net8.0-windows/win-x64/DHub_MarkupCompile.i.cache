@@ -1,5 +1,5 @@
 ﻿DHub
-1.0.1.0
+1.0.3.0
 
 winexe
 C#
@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Program Files\work\git\BITS\DHub\DHub_dev\src\ShortcutList\App.xaml
-3103367342
+4-2069525698
 
-17-361476099
+251992863795
 207548726712
-Views\MainWindow.xaml;Views\QuickSearchWindow.xaml;Views\ShortcutEditWindow.xaml;
+Views\MainWindow.xaml;Views\OpenApplicationPickerWindow.xaml;Views\QuickSearchWindow.xaml;Views\ShortcutEditWindow.xaml;
 
 False
 

@@ -88,6 +88,29 @@ public static class ShortcutRunner
         });
     }
 
+
+    public static void RunCommand(CommandItem command)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = command.Command,
+            Arguments = command.Arguments ?? string.Empty,
+            UseShellExecute = true
+        };
+
+        if (!string.IsNullOrWhiteSpace(command.WorkingDirectory))
+        {
+            startInfo.WorkingDirectory = command.WorkingDirectory;
+        }
+
+        if (command.RunAsAdministrator)
+        {
+            startInfo.Verb = "runas";
+        }
+
+        Process.Start(startInfo);
+    }
+
     private static void RunWithApplication(ShortcutItem item, string openApplicationPath)
     {
         var arguments = BuildOpenApplicationArguments(item);

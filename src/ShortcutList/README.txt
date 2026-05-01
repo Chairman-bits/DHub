@@ -1,42 +1,47 @@
-DHub
+DHub / ShortcutList
+===================
 
-Build:
-tools\Build-EXE-ONLY.bat
+変更内容
+--------
+- 一覧画面の「お気に入り」列から直接登録/解除できるようにしました。
+  - セル内の「☆ 登録」「★ 解除」をクリックするだけで保存されます。
+  - 右クリックメニュー、上部のお気に入りボタンからも操作できます。
+- 登録/編集画面で、開くアプリを「よく使うアプリから選択」できるようにしました。
+  - フォルダは explorer.exe を初期値にします。
+  - VS Code / Cursor / Visual Studio / ブラウザ / Office / ターミナル系などを候補表示します。
+  - Windows の App Paths レジストリから取得できるインストール済みアプリも候補に加えます。
+- 開くアプリ候補画面を改善しました。
+  - 検索欄に加えてカテゴリ絞り込みを追加しました。
+  - 対象種別や拡張子に応じて、使いそうなアプリを上位に表示します。
+  - 候補にない場合のみ「直接参照」で exe を選択できます。
+- 既存の shortcuts.json と settings.json との互換性を保つため、追加項目は未設定でも動作します。
 
-Distribution:
-release\DHub.exe only
+使い方
+------
+1. 一覧画面で「☆ 登録」をクリックするとお気に入りになります。
+2. お気に入り済みの行では「★ 解除」をクリックすると解除されます。
+3. 追加/編集画面の「よく使うアプリから選択」でアプリを選ぶと、開くアプリ欄に反映されます。
+4. より細かく探したい場合は「候補から選択」を押し、検索欄やカテゴリで絞り込んでください。
 
-New features:
-- Ctrl+Space global hotkey opens Spotlight-style quick search.
-- Quick search supports incremental search and Enter launch.
-- Tags/groups have colors.
-- Favorite shortcuts are supported from the edit screen, toolbar, right-click menu, quick search, and tray menu.
-- Each shortcut can specify the application used to open it.
-- Folders default to explorer.exe as the opening application.
-- Right-click context menu supports open, open location, favorite toggle, opening application selection, edit, delete, and path copy.
-- Launch count and last launch date are recorded.
-- Header sorting is supported.
-- GitHub version check and self-update are supported.
-- Shortcut export/import for PC replacement.
-- Settings export/import.
-- Column visibility settings.
-- Broken link check.
-- Duplicate cleanup.
-- Tray quick launch.
+ビルド
+------
+- Visual Studio または同梱のバッチから通常通りビルドしてください。
+- このZIPはソース一式、ソリューション、プロジェクト、アイコン、ビルド用バッチを含みます。
 
-GitHub update setup:
-1. Build release\DHub.exe.
-2. Upload DHub.zip and DHubUpdater.zip to the GitHub raw/release location used by version.json.
-3. Put release-template/version.json in your repository, or change UpdateVersionUrl in the stored settings JSON.
-4. Update version, downloadUrl, updaterUrl, and releaseNotes.
+v1.0.3 additional stability/management features:
+- Backup restore wizard from the sidebar/settings menu.
+- Bulk edit for selected shortcuts (group, tags, favorite, open application).
+- File/application icon display in the shortcut list.
+- Independent settings screen for general, backup/recovery, and import/export settings.
+- settings schemaVersion management.
+- Safe save: write to temporary file, validate JSON, create .bak, then replace.
+- Startup recovery: if shortcuts.json is broken, DHub attempts to recover from .bak or Backups/*.json.
 
-version.json format:
-{
-  "version": "1.0.2",
-  "downloadUrl": "https://raw.githubusercontent.com/Chairman-bits/DHub/main/DHub.zip",
-  "updaterUrl": "https://raw.githubusercontent.com/Chairman-bits/DHub/main/DHubUpdater.zip",
-  "releaseNotes": "Update notes here."
-}
-
-Data location:
-%LocalAppData%\DHub
+追加機能メモ（全作業の起点化）
+- ホーム画面・今日の作業ダッシュボード
+- 統合検索 / コマンドパレット
+- コマンドショートカット管理
+- ショートカット・コマンドのメモ/作業ノート
+- 起動ログ・操作ログ
+- 設定・データの分離保存（shortcuts.data.json / workspaces.data.json / commands.data.json / logs.data.json / settings.data.json）
+- 統合検索対象: ショートカット、ワークスペース、コマンド、操作、メモ、ログ
